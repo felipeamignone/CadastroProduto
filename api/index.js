@@ -1,11 +1,12 @@
 import express from "express";
+import path from "path";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 
 const port = 3001;
 const app = express();
 
-app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -20,6 +21,8 @@ app.use(
     },
   })
 );
+
+app.use(express.static(path.join(process.cwd(), "public")));
 
 //pagina de login
 app.get("/login", (req, res) => {
@@ -55,7 +58,10 @@ function usuarioEstaAutenticado(req, res, next) {
   res.redirect("/login.html");
 }
 
-app.use(usuarioEstaAutenticado, express.static("restricted"));
+app.use(
+  usuarioEstaAutenticado,
+  express.static(path.join(process.cwd(), "restricted"))
+);
 
 //pagina de produtos
 app.get("/produtos", (req, res) => {
